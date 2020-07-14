@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Input</title>
+</head>
+
+<body>
+    <form method="POST" action="/">
+        Flag: <input type="text" name="flag" required><br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if flag %}
+    <h1>{{is_correct}}</h1>
+    {% endif %}
+</body>
+
+</html>
