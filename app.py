@@ -6,7 +6,7 @@ load_dotenv()
 
 app = Flask(__name__)
 loggedIn = False
-
+teamSizeLimit = 4
 
 if (loggedIn == True):
     @app.route('/ctf', methods=['POST'])
