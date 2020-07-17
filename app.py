@@ -1,10 +1,16 @@
 from flask import Flask, request, render_template, redirect, url_for
 import os
 from dotenv import load_dotenv
+import init_db
+import sqlite3
 load_dotenv()
 # from datetime import datetime
 
 app = Flask(__name__)
+
+connection = sqlite3.connect('database.db')
+cursor = connection.cursor()
+
 loggedIn = False
 teamSizeLimit = 4
 
@@ -25,10 +31,14 @@ else:
     def login():
         error = None
         if request.method == 'POST':
-            if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-                error = 'Invalid Credentials. Please try again.'
+            if request.form['userteam'] :
+                error = 'Team is full, please try another team.'
             else:
                 loggedIn = True
+                username = request.form['username']
+                userteam = request.form['userteam']
+
+                cursor.execute("INSERT INTO Users ")
                 return render_template('index.html')
         return render_template('login.html', error=error)
 

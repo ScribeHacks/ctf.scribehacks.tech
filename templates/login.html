@@ -11,8 +11,8 @@
       <form action="" method="post">
         <input type="text" placeholder="Username" name="username" value="{{
           request.form.username }}" required="true">
-         <input type="password" placeholder="Password" name="password" value="{{
-          request.form.password }}" required="true">
+         <input type="text" placeholder="team" name="userteam" value="{{
+          request.form.userteam }}" required="true">
         <input class="btn btn-default" type="submit" value="Login">
       </form>
       {% if error %}
