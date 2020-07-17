@@ -9,44 +9,48 @@ load_dotenv()
 app = Flask(__name__)
 
 connection = sqlite3.connect('database.db')
-cursor = connection.cursor()
+
 
 loggedIn = False
 teamSizeLimit = 4
+currentID = 0
 
-if (loggedIn == True):
-    @app.route('/ctf', methods=['POST'])
-    def flags():
-        flag = request.form["flag"]
-        processed_text = flag.upper()
-        first_flag = os.getenv("FLAG_1")
-        print(first_flag)
-        if (processed_text == first_flag):
-            correct_answer = "Your flag is correct!"
-        else:
-            correct_answer = "Your flag is incorrect. Please try again."
-        return render_template("index.html", is_correct = correct_answer, flag=flag)
-else:
-    @app.route('/', methods=['GET', 'POST'])
-    def login():
-        error = None
-        if request.method == 'POST':
-            if request.form['userteam'] :
-                error = 'Team is full, please try another team.'
-            else:
-                loggedIn = True
-                username = request.form['username']
-                userteam = request.form['userteam']
-
-                cursor.execute("INSERT INTO Users ")
-                return render_template('index.html')
-        return render_template('login.html', error=error)
+# if loggedIn == True:
 
 
+@app.route('/ctf', methods=['POST'])
+def flags():
+            return render_template("index.html")
+            # flag = request.form["flag"]
+            # processed_text = flag.upper()
+            # first_flag = os.getenv("FLAG_1")
+            # print(first_flag)
+            # if processed_text == first_flag:
+            #     correct_answer = "Your flag is correct!"
+            # else:
+            #     correct_answer = "Your flag is incorrect. Please try again."
+            # return render_template("index.html", is_correct=correct_answer, flag=flag)
+@app.route('/', methods=['GET', 'POST'])
+def login():
+            error = None
+            if request.method == 'POST':
+                if request.form['username'] == '' or request.form['userteam'] == '':
+                    error = 'Did not provide either username or team'
+                else:
+                    global currentID
+                    currentID += 1
+                    username = request.form['username']
+                    userteam = request.form['userteam']
 
+                    with sqlite3.connect('database.db') as con:
+                        cursor = con.cursor()
+                        cursor.execute(
+                            "INSERT INTO Users (Username, Team) VALUES (?, ?)", (username, userteam))
+                    loggedIn = True
+                    return redirect('127.0.0.1:500/ctf')
+            return render_template('login.html', error=error)
 
-
- # Launch the FlaskPy dev server
+     # Launch the FlaskPy dev server
 app.run(host="localhost", debug=True)
 
 # def hello():
