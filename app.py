@@ -15,21 +15,17 @@ loggedIn = False
 teamSizeLimit = 4
 currentID = 0
 
-# if loggedIn == True:
 
 
-@app.route('/ctf', methods=['POST'])
+
+@app.route('/ctf', methods=['GET', 'POST'])
 def flags():
-            return render_template("index.html")
-            # flag = request.form["flag"]
-            # processed_text = flag.upper()
-            # first_flag = os.getenv("FLAG_1")
-            # print(first_flag)
-            # if processed_text == first_flag:
-            #     correct_answer = "Your flag is correct!"
-            # else:
-            #     correct_answer = "Your flag is incorrect. Please try again."
-            # return render_template("index.html", is_correct=correct_answer, flag=flag)
+            if loggedIn == True:
+                return render_template("index.html")
+            else:
+                return redirect('/')
+                # return render_template("login.html")
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
             error = None
@@ -46,8 +42,11 @@ def login():
                         cursor = con.cursor()
                         cursor.execute(
                             "INSERT INTO Users (Username, Team) VALUES (?, ?)", (username, userteam))
+                        con.commit()    
+
+                    global loggedIn    
                     loggedIn = True
-                    return redirect('127.0.0.1:500/ctf')
+                    return redirect('/ctf')
             return render_template('login.html', error=error)
 
      # Launch the FlaskPy dev server
@@ -65,3 +64,15 @@ app.run(host="localhost", debug=True)
 #          </body></html>
 #          """.format(
 #              name, str(datetime.now()))
+
+            # flag = request.form["flag"]
+            # processed_text = flag.upper()
+            # first_flag = os.getenv("FLAG_1")
+            # print(first_flag)
+            # if processed_text == first_flag:
+            #     correct_answer = "Your flag is correct!"
+            # else:
+            #     correct_answer = "Your flag is incorrect. Please try again."
+            # return render_template("index.html", is_correct=correct_answer, flag=flag)
+            
+            # if loggedIn == True:
