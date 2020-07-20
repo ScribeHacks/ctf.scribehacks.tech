@@ -14,42 +14,51 @@ connection = sqlite3.connect('database.db')
 loggedIn = False
 teamSizeLimit = 4
 currentID = 0
-
-
+username = ""
+userteam = ""
 
 
 @app.route('/ctf', methods=['GET', 'POST'])
 def flags():
-            if loggedIn == True:
-                return render_template("index.html")
-            else:
-                return redirect('/')
-                # return render_template("login.html")
+    if loggedIn == True:
+        global username
+        global userteam
+        return render_template("index.html", username=username, userteam=userteam)
+    else:
+        return redirect('/')
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-            error = None
-            if request.method == 'POST':
-                if request.form['username'] == '' or request.form['userteam'] == '':
-                    error = 'Did not provide either username or team'
-                else:
-                    global currentID
-                    currentID += 1
-                    username = request.form['username']
-                    userteam = request.form['userteam']
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] == '' or request.form['userteam'] == '':
+            error = 'Did not provide either username or team'
+        else:
+            global currentID
+            currentID += 1
+            global username
+            global userteam
+            username = request.form['username']
+            userteam = request.form['userteam']
 
-                    with sqlite3.connect('database.db') as con:
-                        cursor = con.cursor()
-                        cursor.execute(
-                            "INSERT INTO Users (Username, Team) VALUES (?, ?)", (username, userteam))
-                        con.commit()    
+            with sqlite3.connect('database.db') as con:
+                cursor = con.cursor()
+                if cursor.execute(
+                        "SELECT TeamName FROM Teams WHERE TeamName = ?", (userteam)) != null:
+                    cursor.execute("UPDATE Teams SET UserCount + 1;")
 
-                    global loggedIn    
-                    loggedIn = True
-                    return redirect('/ctf')
-            return render_template('login.html', error=error)
+                cursor.execute(
+                    "INSERT INTO Users (Username, Teams) VALUES (?, ?)", (username, userteam))
+                con.commit()
+                con.close()
 
-     # Launch the FlaskPy dev server
+            global loggedIn
+            loggedIn = True
+            return redirect('/ctf')
+    return render_template('login.html', error=error)
+
+    # Launch the FlaskPy dev server
 app.run(host="localhost", debug=True)
 
 # def hello():
@@ -65,14 +74,14 @@ app.run(host="localhost", debug=True)
 #          """.format(
 #              name, str(datetime.now()))
 
-            # flag = request.form["flag"]
-            # processed_text = flag.upper()
-            # first_flag = os.getenv("FLAG_1")
-            # print(first_flag)
-            # if processed_text == first_flag:
-            #     correct_answer = "Your flag is correct!"
-            # else:
-            #     correct_answer = "Your flag is incorrect. Please try again."
-            # return render_template("index.html", is_correct=correct_answer, flag=flag)
-            
-            # if loggedIn == True:
+# flag = request.form["flag"]
+# processed_text = flag.upper()
+# first_flag = os.getenv("FLAG_1")
+# print(first_flag)
+# if processed_text == first_flag:
+#     correct_answer = "Your flag is correct!"
+# else:
+#     correct_answer = "Your flag is incorrect. Please try again."
+# return render_template("index.html", is_correct=correct_answer, flag=flag)
+
+# if loggedIn == True:
