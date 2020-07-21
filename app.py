@@ -20,9 +20,14 @@ userteam = ""
 
 @app.route('/ctf', methods=['GET', 'POST'])
 def flags():
-    if loggedIn == True:
+    global loggedIn
+    while loggedIn == True:
         global username
         global userteam
+        # global loggedIn
+        if request.form['btn_logout'] == 'logout':
+            # global loggedIn
+            loggedIn = False
         return render_template("index.html", username=username, userteam=userteam)
     else:
         return redirect('/')
@@ -44,19 +49,23 @@ def login():
 
             with sqlite3.connect('database.db') as con:
                 cursor = con.cursor()
-                if cursor.execute(
-                        "SELECT TeamName FROM Teams WHERE TeamName = ?", (userteam)) != null:
-                    cursor.execute("UPDATE Teams SET UserCount + 1;")
 
-                cursor.execute(
-                    "INSERT INTO Users (Username, Teams) VALUES (?, ?)", (username, userteam))
+                if cursor.execute("SELECT UserCount FROM Teams WHERE TeamName = ?", (userteam,)) == 4:
+                    error = "Team is full"
+                else:
+                    cursor.execute(
+                        "UPDATE Teams SET UserCount = UserCount + 1 WHERE TeamName = ?", (userteam,))
+                    cursor.execute(
+                        "INSERT INTO Users (Username, Team) VALUES (?, ?)", (username, userteam))
+                    error = ''
                 con.commit()
-                con.close()
 
             global loggedIn
-            loggedIn = True
-            return redirect('/ctf')
+            if error == '':
+                loggedIn = True
+                return redirect('/ctf')
     return render_template('login.html', error=error)
+
 
     # Launch the FlaskPy dev server
 app.run(host="localhost", debug=True)
