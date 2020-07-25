@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for
 import os
 from dotenv import load_dotenv
-import init_db
+# import init_db
 import sqlite3
 load_dotenv()
 # from datetime import datetime
@@ -14,22 +14,20 @@ connection = sqlite3.connect('database.db')
 loggedIn = False
 teamSizeLimit = 4
 currentID = 0
-username = ""
 userteam = ""
 
 
 @app.route('/ctf', methods=['GET', 'POST'])
-def flags():
+def ctf():
     global loggedIn
     while loggedIn == True:
-        global username
         global userteam
         # global loggedIn
         if request.form['btn_logout'] == 'logout':
             # global loggedIn
             loggedIn = False
         return render_template("index.html", username=username, userteam=userteam)
-    else:
+    while loggedIn == False:
         return redirect('/')
 
 
@@ -37,29 +35,20 @@ def flags():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] == '' or request.form['userteam'] == '':
-            error = 'Did not provide either username or team'
+        if request.form['userteam'] == '':
+            error = 'Did not provide a team'
         else:
             global currentID
             currentID += 1
-            global username
             global userteam
-            username = request.form['username']
             userteam = request.form['userteam']
 
             with sqlite3.connect('database.db') as con:
                 cursor = con.cursor()
-
-                if cursor.execute("SELECT UserCount FROM Teams WHERE TeamName = ?", (userteam,)) == 4:
-                    error = "Team is full"
-                else:
-                    cursor.execute(
-                        "UPDATE Teams SET UserCount = UserCount + 1 WHERE TeamName = ?", (userteam,))
-                    cursor.execute(
-                        "INSERT INTO Users (Username, Team) VALUES (?, ?)", (username, userteam))
-                    error = ''
+                cursor.execute(
+                    "INSERT INTO Teams (TeamName) VALUES (?)", (userteam,))
+                error = ''
                 con.commit()
-
             global loggedIn
             if error == '':
                 loggedIn = True
