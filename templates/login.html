@@ -3,17 +3,15 @@
 <head>
   <title>Login/Register</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
 </head>
 
 <body>
   <div class="container">
     <h1>Login</h1>
     <br>
-    <form action="" method="post">
-      <input type="text" placeholder="team" name="userteam" value="{{
-          request.form.userteam }}" required="true">
-      <input class="btn btn-default" type="submit" value="Login">
+    <form action="" method="POST">
+      <input type="text" name="userteam" value="{{ userteam }}" required="true">
+      <input type="submit" value="Login">
     </form>
     {% if error %}
     <p class="error"><strong>Error:</strong> {{ error }}

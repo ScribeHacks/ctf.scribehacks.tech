@@ -1,0 +1,23 @@
+<html>
+
+<head>
+    <title>Isn't This Meta?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="challenge-title">Isn't This Meta?</h1>
+        <h3>Take a look at this cute dog. Wonder where we saw it?</h3>
+        <br>
+        <form action="" method="post">
+            <input type="text" name="flag3" value="{{ env['FLAG_3']}}" required="true">
+            <input class="submit-button" type="submit" value="Flag_3_Submit">
+        </form>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+</body>
+
+</html>
