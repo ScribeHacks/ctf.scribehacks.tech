@@ -16,6 +16,22 @@ username = ""
 loggedIn = True
 
 
+@app.route('/ctf/metadata', methods=['GET', 'POST'])
+def metadata():
+    if loggedIn == True:
+        print("Hello")
+        if request.method == 'POST':
+            print(request.form['inputFlag3'])
+            if request.form['inputFlag3'] == os.getenv('FLAG_3'):
+                return redirect('/ctf')
+            else:
+                print("Incorrect Flag, Try again")
+                error = 'Incorrect Flag, Try again'
+    else:
+        return redirect('/')
+    return render_template('challenges/metadata.html')
+
+
 @app.route('/ctf', methods=['GET', 'POST'])
 def ctf():
     if loggedIn == True:
